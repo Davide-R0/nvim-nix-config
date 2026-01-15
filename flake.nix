@@ -23,10 +23,21 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     nixCats.url = "github:BirdeeHub/nixCats-nvim";
-
     # neovim-nightly-overlay = {
     #   url = "github:nix-community/neovim-nightly-overlay";
     # };
+
+    #plugins-lazy-nvim = {
+    #    url = "github:folke/lazy.nvim";
+    #    flake = false;
+    #};
+
+    #????
+    #plugins-treesitter-textobjects = {
+    #  url = "github:nvim-treesitter/nvim-treesitter-textobjects/main";
+    #  flake = false;
+    #};
+
 
     # see :help nixCats.flake.inputs
     # If you want your plugin to be loaded by the standard overlay,
@@ -38,6 +49,8 @@
     # for specific tags, branches and commits, see:
     # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake.html#examples
 
+    # Se vuoi usare plugins non presenti in nixpkgs, aggiungili qui col prefisso "plugins-"
+    # plugins-my-plugin = { url = "github:owner/repo"; flake = false; };
   };
 
   # see :help nixCats.flake.outputs
@@ -51,7 +64,7 @@
     # will not apply to module imports
     # as that will have your system values
     extra_pkg_config = {
-      # allowUnfree = true;
+       allowUnfree = true;
     };
     # management of the system variable is one of the harder parts of using flakes.
 
@@ -94,18 +107,51 @@
       # this includes LSPs
       lspsAndRuntimeDeps = {
         general = with pkgs; [
+          ## Tool essenziali per Telescope e Neovim
+          #ripgrep
+          #fd
+          #
+          ## LSP Servers (coerenti con la tua config lua)
+          #lua-language-server
+          #nixd  # O nil, per Nix
+          #stylua # Formatter per Lua
+          #
+          ## C compiler per compilare treesitter parsers se necessario
+          #gcc
         ];
       };
 
       # This is for plugins that will load at startup without using packadd:
       startupPlugins = {
-        gitPlugins = with pkgs.neovimPlugins; [ ];
+        debug = with pkgs.vimPlugins; [
+        ];
+        gitPlugins = with pkgs.neovimPlugins; [
+          #gitsigns-nvim 
+          #vim-fugitive
+        ];
         general = with pkgs.vimPlugins; [
+          #pkgs.neovimPlugins.lazy-nvim
           lazy-nvim
           # Aggiungere qui i plugin
           lualine-nvim    # lualine
           nvim-web-devicons # Spesso richiesto da lualine per le icone
-        ];
+
+          oil-nvim
+	      # Treesitter
+          (nvim-treesitter.withPlugins (plugins: with plugins; [
+            nix
+            lua
+            python
+            javascript
+            markdown
+            markdown_inline
+            bash
+            vim
+            vimdoc
+            query
+            c
+          ]))
+      ];
       };
 
       # not loaded automatically at startup.
@@ -186,17 +232,16 @@
         categories = {
           general = true;
           gitPlugins = true;
-          customPlugins = true;
-          test = true;
-          example = {
-            youCan = "add more than just booleans";
-            toThisSet = [
-              "and the contents of this categories set"
-              "will be accessible to your lua with"
-              "nixCats('path.to.value')"
-              "see :help nixCats"
-            ];
-          };
+          #test = true;
+          #example = {
+          #  youCan = "add more than just booleans";
+          #  toThisSet = [
+          #    "and the contents of this categories set"
+          #    "will be accessible to your lua with"
+          #    "nixCats('path.to.value')"
+          #    "see :help nixCats"
+          #  ];
+          #};
         };
       };
     };

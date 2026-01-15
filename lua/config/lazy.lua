@@ -1,53 +1,36 @@
--- Check if we are on nix system or normal
-local nixCats = require('nixCats')
+-- Funzione per gestire il percorso del lockfile con nixCats
+local function getlockfilepath()
+  if require('nixCatsUtils').isNixCats and nixCats.settings and type(nixCats.settings.unwrappedCfgPath) == 'string' then
+    return nixCats.settings.unwrappedCfgPath .. '/lazy-lock.json'
+  else
+    return vim.fn.stdpath 'config' .. '/lazy-lock.json'
+  end
+end
 
--- Do not needed if lazy-nvim is in the flake.nix
--- -- Bootstrap lazy.nvim
--- local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
--- if not (vim.uv or vim.loop).fs_stat(lazypath) then
---     -- Se siamo su Nix, nixCats potrebbe aver già scaricato lazy.nvim per noi
---     -- Se non lo ha fatto, lo scarichiamo normalmente
---     local lazyrepo = "https://github.com/folke/lazy.nvim.git"
---     local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
---     if vim.v.shell_error ~= 0 then
---         vim.api.nvim_echo({
---             { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
---             { out, "WarningMsg" },
---             { "\nPress any key to exit..." },
---         }, true, {})
---         vim.fn.getchar()
---         os.exit(1)
---     end
--- end
--- vim.opt.rtp:prepend(lazypath)
-
--- Make sure to setup `mapleader` and `maplocalleader` before
--- loading lazy.nvim so that mappings are correct.
--- This is also a good place to setup other settings (vim.opt)
-vim.g.mapleader = " "
-vim.g.maplocalleader = "\\"
-
--- Setup lazy.nvim
-require("lazy").setup({
-    spec = {
-        -- import your plugins
-        { import = "plugins" },
+local lazyOptions = {
+  lockfile = getlockfilepath(),
+  ui = {
+    icons = vim.g.have_nerd_font and {} or {
+      cmd = '⌘', config = '🛠', event = '📅', ft = '📂', init = '⚙', keys = '🗝', plugin = '🔌', 
+      runtime = '💻', require = '🌙', source = '📄', start = '🚀', task = '📌', lazy = '💤 ',
     },
+  },
+}
 
-    -- For nixos nixCats
-    performance = {
-        rtp = {
-            -- nixCats aggiunge automaticamente i plugin scaricati da Nix al runtimepath
-            -- così lazy.nvim li vede come "già installati"
-            -- Se reset è true, lazy.nvim pulisce il runtimepath e Nix non trova più i plugin.
-            -- Lo impostiamo a false solo se siamo su Nix.
-            reset = not nixCats.pawsible,
-        },
-    },
+-- 2. Imposta la Leader Key prima di caricare lazy
+vim.g.mapleader = ' '
+vim.g.maplocalleader = ' '
 
-    -- Configure any other settings here. See the documentation for more details.
-    -- automatically check for plugin updates
-    -- Su NixOS è meglio disabilitare il checker automatico, 
-    -- perché i plugin nello store di Nix non possono essere aggiornati da lazy.
-    checker = { enabled = not nixCats.pawsible },
-})
+-- 3. Imposta se abbiamo una Nerd Font (usando nixCats)
+vim.g.have_nerd_font = nixCats('have_nerd_font')
+
+-- Configurazione e installazione dei plugin TRAMITE IL WRAPPER NIXCATS.
+-- Ora che il flake.nix è corretto, questo funzionerà come previsto.
+require('nixCatsUtils.lazyCat').setup(
+  nixCats.pawsible { 'allPlugins', 'start', 'lazy.nvim' }, -- Trova lazy.nvim da Nix
+  {
+    -- Importa tutto ciò che si trova in lua/plugins/*.lua come una lista di specifiche
+    { import = 'plugins' },
+  },
+  lazyOptions
+)

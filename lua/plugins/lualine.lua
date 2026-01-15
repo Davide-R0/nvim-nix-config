@@ -1,8 +1,18 @@
 return {
 	'nvim-lualine/lualine.nvim',
-	enabled = true, --se il plugin è gestito da nix lazy non deve scaricarlo
-	dependencies = { 'nvim-tree/nvim-web-devicons' },
-	config = function()
+    
+	name = 'lualine.nvim',
+	
+    enabled = true, --se il plugin è gestito da nix lazy non deve scaricarlo
+	
+     dependencies ={ 'nvim-tree/nvim-web-devicons', name = 'nvim-web-devicons', enabled = vim.g.have_nerd_font },
+    --dependencies = { 'nvim-tree/nvim-web-devicons' },
+    
+    build = require('nixCatsUtils').lazyAdd ':TSUpdate',
+    
+    lazy = false, -- false = the plugin is loaded at startup | true = the plugin is loaded when needed
+
+    config = function()
 		local auto_theme = require('lualine.themes.auto')
 
 		local modes = { "normal", "insert", "visual", "replace", "command", "inactive" }
