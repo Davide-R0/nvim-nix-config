@@ -101,6 +101,7 @@
       startupPlugins = {
         gitPlugins = with pkgs.neovimPlugins; [ ];
         general = with pkgs.vimPlugins; [
+          lazy-nvim
           # Aggiungere qui i plugin
           lualine-nvim    # lualine
           nvim-web-devicons # Spesso richiesto da lualine per le icone

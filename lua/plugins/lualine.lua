@@ -1,5 +1,6 @@
 return {
 	'nvim-lualine/lualine.nvim',
+	enabled = true, --se il plugin è gestito da nix lazy non deve scaricarlo
 	dependencies = { 'nvim-tree/nvim-web-devicons' },
 	config = function()
 		local auto_theme = require('lualine.themes.auto')
