@@ -2,8 +2,6 @@ return {
   -- Autocompletion
   'hrsh7th/nvim-cmp',
 
-  name = 'nvim-cmp',
-
   event = 'InsertEnter',
 
   dependencies = {

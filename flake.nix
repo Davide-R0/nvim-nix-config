@@ -122,6 +122,14 @@
           # For telescope?
           ripgrep
           fd
+
+          # For images, pdf, videos, ecc...
+          chafa
+          ueberzugpp       # NECESSARIO per vedere le immagini
+          ffmpegthumbnailer # Opzionale per video
+          poppler-utils     # Opzionale per PDF
+          imagemagick # Optional, for svg
+
           #stdenv.cc.cc
           nix-doc
           # language servers
@@ -158,7 +166,12 @@
           fidget-nvim # Notifications
           lazydev-nvim # lua lsp for nvim configurations
           todo-comments-nvim # Todo comments
+          nvim-spectre # for searching in multiple files
+          popup-nvim # for extra window managment
+          undotree # undotree
 
+          # Git
+          blamer-nvim
 
           nvim-web-devicons # For special icons (Lualine, Telescope, Oil, ...)
 
@@ -167,6 +180,7 @@
           telescope-fzf-native-nvim
           telescope-ui-select-nvim
           telescope-file-browser-nvim
+          telescope-media-files-nvim
           plenary-nvim
 
           # Lsp
@@ -174,30 +188,18 @@
 
           # Autocomplition
           nvim-cmp
-          luasnip
           cmp_luasnip
           cmp-nvim-lsp
           cmp-path
+          cmp-buffer # TODO: add to the lua config
+          cmp-cmdline # TODO: add to the lua config
+          luasnip
           #friendly-snippets
 
           # Treesitter
           nvim-treesitter.withAllGrammars
-          #(nvim-treesitter.withPlugins (plugins: with plugins; [
-                #  nix
-                #  lua
-                #  python
-                #  javascript
-                #  markdown
-                #  markdown_inline
-                #  bash
-                #  vim
-                #  vimdoc
-                #  query
-                #  c
-                #  cpp
-                #  rust
-                #]))
-          ];
+          #(nvim-treesitter.withPlugins (plugins: with plugins; [ nix lua python javascript markdown markdown_inline bash vim vimdoc query c cpp rust ]))
+      ];
       debug = [
       ];
       gitPlugins = [

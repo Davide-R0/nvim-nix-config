@@ -6,10 +6,14 @@ vim.o.shell = "bash"
 vim.o.shellcmdflag = "-c"
 
 -- On saving files
-set.backup = false 
-set.swapfile = false 
--- undoo save
-set.undodir = os.getenv("HOME") .. "/.config/undodir/"
+set.backup = false
+set.swapfile = false
+-- Undo save
+local undodir = vim.fn.stdpath("state") .. "/undo"  --~/.local/state/nvim/undo
+if vim.fn.isdirectory(undodir) == 0 then
+  vim.fn.mkdir(undodir, "p")
+end
+set.undodir = undodir
 set.undofile = true
 
 -- for obsidian preview
@@ -21,7 +25,7 @@ set.relativenumber = true
 set.number = true
 
 -- Set the behavior of tab
-set.tabstop = 4 
+set.tabstop = 4
 set.shiftwidth = 4
 set.softtabstop = 4
 set.expandtab = true  --per avere solo spazi e non tab
@@ -55,7 +59,7 @@ set.autoindent = true
 -- Set status line to visualize the modes
 -- Hide insert, normal, visual status mode
 set.showmode = false
-set.showcmd = true 
+set.showcmd = true
 
 -- Hilight matching parentesis..
 set.showmatch = true

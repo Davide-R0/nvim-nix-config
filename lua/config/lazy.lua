@@ -18,8 +18,8 @@ local lazyOptions = {
 }
 
 -- 2. Imposta la Leader Key prima di caricare lazy
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
+vim.g.mapleader = '\\'
+vim.g.maplocalleader = '\\'
 
 -- 3. Imposta se abbiamo una Nerd Font (usando nixCats)
 vim.g.have_nerd_font = nixCats('have_nerd_font')

@@ -1,4 +1,11 @@
 lazy-lock.json
-flake.lock
 dankcolors.lua
-result/
+result
+secrets
+result-*
+.git
+.DS_Store
+keys
+*.key
+.env
+

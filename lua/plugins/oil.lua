@@ -1,8 +1,6 @@
 return {
   'stevearc/oil.nvim',
 
-  name = 'oil.nvim',
-
   enabled = true,
 
   lazy = false, -- false = the plugin is loaded at startup | true = the plugin is loaded when needed

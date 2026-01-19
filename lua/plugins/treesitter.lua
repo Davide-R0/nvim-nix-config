@@ -1,8 +1,6 @@
 return {
   'nvim-treesitter/nvim-treesitter',
 
-  name = 'nvim-treesitter',
-
   lazy = false,
 
   after = function(plugin)

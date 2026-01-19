@@ -1,8 +1,6 @@
 return {
   'nvim-lualine/lualine.nvim',
 
-  name = 'lualine.nvim',
-
   enabled = true, --se il plugin è gestito da nix lazy non deve scaricarlo
 
   dependencies ={ 'nvim-tree/nvim-web-devicons', name = 'nvim-web-devicons', enabled = vim.g.have_nerd_font },

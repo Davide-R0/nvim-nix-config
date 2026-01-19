@@ -1,8 +1,6 @@
 return {
   'nvim-telescope/telescope.nvim',
 
-  name = 'telescope.nvim',
-
   event = 'VimEnter',
 
   branch = '0.1.x',
@@ -30,6 +28,9 @@ return {
 
     -- Useful for getting pretty icons, but requires a Nerd Font.
     { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
+
+    { 'nvim-telescope/telescope-media-files.nvim' },
+
   },
 
   config = function()
@@ -64,12 +65,20 @@ return {
         ['ui-select'] = {
           require('telescope.themes').get_dropdown(),
         },
+        media_files = {
+          -- filetypes whitelist
+          -- defaults to {"png", "jpg", "mp4", "webm", "pdf"}
+          filetypes = {"png", "webp", "jpg", "jpeg", "mp4", "webm", "pdf" },
+          -- find command (defaults to `fd`)
+          find_cmd = "fd"
+        }
       },
     }
 
     -- Enable Telescope extensions if they are installed
     pcall(require('telescope').load_extension, 'fzf')
     pcall(require('telescope').load_extension, 'ui-select')
+    pcall(require('telescope').load_extension, 'media_files')
 
     -- See `:help telescope.builtin`
     local builtin = require 'telescope.builtin'

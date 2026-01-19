@@ -1,17 +1,14 @@
 -- undoo tree
-vim.keymap.set('n', '<leader>t', vim.cmd.UndotreeToggle)
-
--- Oil
---vim.keymap.set("n", "-", "<CMD>Oil --float<CR>", { desc = "Open parent directory" })
---vim.keymap.set("n", ".", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle)
+--vim.keymap.set('n', '<leader>u', require('undotree').toggle, { noremap = true, silent = true })
 
 -- gen AI
 --vim.keymap.set({ 'n', 'v' }, '<leader>]', ':Gen<CR>')
 
 -- Obsidain
-vim.keymap.set('n', '<leader>ow', ':ObsidianWorkspace<CR>', { desc = "Show all warkspaces" }) 
-vim.keymap.set('n', '<leader>os', ':ObsidianSearch<CR>', { desc = "Grep in all the vault" })  
-vim.keymap.set('n', '<leader>ol', ':ObsidianLinks<CR>', { desc = "Show links in the file" })  
+vim.keymap.set('n', '<leader>ow', ':ObsidianWorkspace<CR>', { desc = "Show all warkspaces" })
+vim.keymap.set('n', '<leader>os', ':ObsidianSearch<CR>', { desc = "Grep in all the vault" })
+vim.keymap.set('n', '<leader>ol', ':ObsidianLinks<CR>', { desc = "Show links in the file" })
 vim.keymap.set('n', '<leader>ot', ':ObsidianTags<CR>', { desc = "Show the tags created" })
 -- 'gf' follow the link 
 -- 'Invio' follow link and/or check checkbokes
@@ -35,6 +32,12 @@ vim.cmd('digraph RR 8477')
 vim.cmd('digraph NN 8469')
 vim.cmd('digraph ZZ 8484')  -- ℤ (Numeri Interi)
 vim.cmd('digraph CC 8450')  -- ℂ (Numeri Complessi)
+
+-- Spectre
+vim.keymap.set('n', '<leader>S', '<cmd>lua require("spectre").toggle()<CR>', { desc = "Toggle Spectre" })
+vim.keymap.set('n', '<leader>sw', '<cmd>lua require("spectre").open_visual({select_word=true})<CR>', { desc = "Search current word" })
+vim.keymap.set('v', '<leader>sw', '<esc><cmd>lua require("spectre").open_visual()<CR>', { desc = "Search current word" })
+vim.keymap.set('n', '<leader>sp', '<cmd>lua require("spectre").open_file_search({select_word=true})<CR>', { desc = "Search on current file" })
 
 -- PRINT
 vim.api.nvim_create_user_command(
@@ -100,7 +103,7 @@ vim.api.nvim_create_user_command(
       '-H', vim.fn.expand('~/.config/pandoc/preamble.tex'),
       --'-V', 'documentclass=scrartcl',
       --'-V lang=it-IT',            -- Imposta la lingua italiana
-      '-V mainfont="Hack Nerd Font"', 
+      '-V mainfont="Hack Nerd Font"',
       '-V monofont="0xProto Nerd Font"'
     }
 
