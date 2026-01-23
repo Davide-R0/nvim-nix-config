@@ -29,13 +29,11 @@
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    #????
+    
     #plugins-treesitter-textobjects = {
-      #  url = "github:nvim-treesitter/nvim-treesitter-textobjects/main";
-      #  flake = false;
-      #};
-
+    #  url = "github:nvim-treesitter/nvim-treesitter-textobjects/main";
+    #  flake = false;
+    #};
 
     # see :help nixCats.flake.inputs
     # If you want your plugin to be loaded by the standard overlay,
@@ -105,7 +103,7 @@
     lspsAndRuntimeDeps = with pkgs; {
       general = [
         tree-sitter
-        tree-sitter-grammars.tree-sitter-markdown-inline
+        #tree-sitter-grammars.tree-sitter-markdown-inline
         
         # manual for nix options
         manix
@@ -177,6 +175,9 @@
         #ollama-cuda
         #ollama-vulkan
         #ollama-rocm
+
+        # Linters
+        markdownlint-cli
       ];
       kickstart-debug = [
         #delve #?
@@ -206,6 +207,11 @@
         undotree # undotree
         image-nvim # Images
         nvim-web-devicons # For special icons (Lualine, Telescope, Oil, ...)
+        nvim-autopairs # autopairs
+        nvim-colorizer-lua # for colors in #ffffff
+
+        # Linter
+        nvim-lint
         
         # AI
         codecompanion-nvim
@@ -218,6 +224,10 @@
 
         # Lean
         lean-nvim
+        # Agda
+        cornelis
+        nvim-hs-vim
+        vim-textobj-user
         
         # For rust Cargo.toml files
         crates-nvim
@@ -233,7 +243,9 @@
 
         # Lsp
         nvim-lspconfig
-
+        
+        #idris2-nvim
+        
         # Autocomplition
         nvim-cmp
         cmp_luasnip
@@ -241,18 +253,43 @@
         cmp-path
         cmp-buffer
         cmp-cmdline
+        #colorful-menu-nvim # Do not work...
         luasnip
         friendly-snippets
 
         # Markdown
         render-markdown-nvim
+        markdown-preview-nvim
         nvim-treesitter-parsers.markdown_inline
 
         # Latex watching
         vimtex
 
         # Treesitter
+        #pkgs.neovimPlugins.treesitter-textobjects
         nvim-treesitter.withAllGrammars
+        #(nvim-treesitter.withPlugins (plugins: with plugins; [
+        #  pkgs.vimPlugins.nvim-treesitter-parsers.bash
+        #  pkgs.vimPlugins.nvim-treesitter-parsers.c
+        #  pkgs.vimPlugins.nvim-treesitter-parsers.cpp
+        #  pkgs.vimPlugins.nvim-treesitter-parsers.go
+        #  pkgs.vimPlugins.nvim-treesitter-parsers.html
+        #  pkgs.vimPlugins.nvim-treesitter-parsers.javascript
+        #  pkgs.vimPlugins.nvim-treesitter-parsers.json
+        #  pkgs.vimPlugins.nvim-treesitter-parsers.lua
+        #  pkgs.vimPlugins.nvim-treesitter-parsers.markdown
+        #  pkgs.vimPlugins.nvim-treesitter-parsers.markdown_inline
+        #  pkgs.vimPlugins.nvim-treesitter-parsers.python
+        #  pkgs.vimPlugins.nvim-treesitter-parsers.query
+        #  pkgs.vimPlugins.nvim-treesitter-parsers.rust
+        #  pkgs.vimPlugins.nvim-treesitter-parsers.toml
+        #  pkgs.vimPlugins.nvim-treesitter-parsers.typescript
+        #  pkgs.vimPlugins.nvim-treesitter-parsers.vim
+        #  pkgs.vimPlugins.nvim-treesitter-parsers.vimdoc
+        #  pkgs.vimPlugins.nvim-treesitter-parsers.yaml
+        #  # Aggiungi qui altri parser di cui hai bisogno
+        #]))
+
         #(nvim-treesitter.withPlugins (plugins: with plugins; [ nix lua python javascript markdown markdown_inline bash vim vimdoc query c cpp rust ]))
       ];
       debug = [

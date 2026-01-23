@@ -2,6 +2,8 @@ return {
   -- Autocompletion
   'hrsh7th/nvim-cmp',
 
+  name = 'nvim-cmp',
+
   event = {'InsertEnter', 'CmdlineEnter' }, -- load even when enter in comand line
 
   dependencies = {
@@ -182,47 +184,47 @@ return {
           -- SORGENTI
           sources = cmp.config.sources({
             { name = 'nvim_lsp',
-              option = {
-                markdown_oxide = {
-                  keyword_pattern = [[\(\k\| \|\/\|#\)\+]]
-                }
+            option = {
+              markdown_oxide = {
+                keyword_pattern = [[\(\k\| \|\/\|#\)\+]]
               }
-            },
-            { name = 'luasnip' },
-            { name = 'render-markdown' }, -- Assicurati di avere il plugin installato
-            { name = 'path' },
-          }, {
-            { name = 'buffer', keyword_length = 5 },
-          }),
-
-          -- FORMATTAZIONE VISIVA
-          formatting = {
-            fields = { 'kind', 'abbr', 'menu' },
-            format = format_func,
+            }
           },
+          { name = 'luasnip' },
+          { name = 'render-markdown' }, -- Assicurati di avere il plugin installato
+          { name = 'path' },
+        }, {
+          { name = 'buffer', keyword_length = 5 },
+        }),
+
+        -- FORMATTAZIONE VISIVA
+        formatting = {
+          fields = { 'kind', 'abbr', 'menu' },
+          format = format_func,
+        },
+      }
+
+      -- CONFIGURAZIONE CMDLINE (Ricerca / e ?)
+      cmp.setup.cmdline({ '/', '?' }, {
+        mapping = cmp.mapping.preset.cmdline(get_mappings(true)),
+        sources = { { name = 'buffer' } },
+        formatting = {
+          fields = { 'abbr' },
         }
+      })
 
-        -- CONFIGURAZIONE CMDLINE (Ricerca / e ?)
-        cmp.setup.cmdline({ '/', '?' }, {
-          mapping = cmp.mapping.preset.cmdline(get_mappings(true)),
-          sources = { { name = 'buffer' } },
-          formatting = {
-            fields = { 'abbr' },
-          }
-        })
-
-        cmp.setup.cmdline(':', {
-          mapping = cmp.mapping.preset.cmdline(get_mappings(true)),
-          sources = cmp.config.sources({
-            { name = 'path' }
-          }, {
-            { name = 'cmdline' }
-          }),
-          formatting = {
-            fields = { 'abbr', 'kind' },
-            format = format_func
-          },
-          matching = { disallow_symbol_nonprefix_matching = false }
-        })
-      end,
-    }
+      cmp.setup.cmdline(':', {
+        mapping = cmp.mapping.preset.cmdline(get_mappings(true)),
+        sources = cmp.config.sources({
+          { name = 'path' }
+        }, {
+          { name = 'cmdline' }
+        }),
+        formatting = {
+          fields = { 'abbr', 'kind' },
+          format = format_func
+        },
+        matching = { disallow_symbol_nonprefix_matching = false }
+      })
+    end,
+  }

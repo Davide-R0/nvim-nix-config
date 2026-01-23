@@ -163,6 +163,11 @@ return {
       capabilities = capabilities,
     }
 
+    -- Haskel
+    servers.hls = {
+      capabilities = capabilities,
+    }
+
     -- 5. Rust
     servers.rust_analyzer = {
       capabilities = capabilities,

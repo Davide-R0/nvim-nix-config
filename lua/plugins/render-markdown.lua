@@ -1,6 +1,8 @@
 return {
   'MeanderingProgrammer/render-markdown.nvim',
 
+  enable = false,
+
   dependencies = { 'nvim-tree/nvim-web-devicons', name = 'nvim-web-devicons', enabled = vim.g.have_nerd_font },
 
   -- Le tue impostazioni vanno qui dentro 'opts'
@@ -194,4 +196,49 @@ return {
         skip_heading = true,
     },
   },
+
+  -- AGGIUNGI QUESTA PARTE
+  config = function(_, opts)
+    require('render-markdown').setup(opts)
+    -- Funzione per applicare gli highlight con sfondo
+    local function set_backgrounds()
+      -- Per i blocchi di codice multiriga, linkiamo lo sfondo a 'Visual'.
+      -- 'Visual' ha quasi sempre uno sfondo definito nel tema per le selezioni.
+      --local pmenu_hl = vim.api.nvim_get_hl(0, { name = 'Comment', link = false })
+      --vim.api.nvim_set_hl(0, 'RenderMarkdownCode', { bg = pmenu_hl.fg })
+
+      -- Per il codice inline (`code`), usiamo lo stesso sfondo.
+      --vim.api.nvim_set_hl(0, 'RenderMarkdownCodeInline', { bg = pmenu_hl.fg })
+
+      -- Prendiamo la definizione di un highlight group che ha uno sfondo (es. Pmenu)
+      --local pmenu_hl = vim.api.nvim_get_hl(0, { name = 'Pmenu', link = false })
+
+      --if not pmenu_hl or not pmenu_hl.bg then
+      --  -- Fallback se non riusciamo a trovare un colore di sfondo
+      --  pmenu_hl = { bg = '#999999' }
+      --end
+
+      -- Applichiamo SOLO lo sfondo ai nostri gruppi, lasciando il testo (fg) intatto
+      --vim.api.nvim_set_hl(0, 'RenderMarkdownCode', { bg = vim.api.nvim_get_hl(0, { name = 'Comment', link = false }).fg })
+      --vim.api.nvim_set_hl(0, 'RenderMarkdownCodeInline', { bg =  })
+      --vim.api.nvim_set_hl(0, 'RenderMarkdownH1Bg', { bg = vim.api.nvim_get_hl(0, { name = 'Delimiter', link = false }).\ })
+      --vim.api.nvim_set_hl(0, 'RenderMarkdownH2Bg', { bg = '#a8e086' })
+      --vim.api.nvim_set_hl(0, 'RenderMarkdownH3Bg', { bg = '#8e7638' })
+      --vim.api.nvim_set_hl(0, 'RenderMarkdownH4Bg', { bg = '#fecc8b' })
+      --vim.api.nvim_set_hl(0, 'RenderMarkdownH5Bg', { bg = '#ab6a3d' })
+      --vim.api.nvim_set_hl(0, 'RenderMarkdownH6Bg', { bg = '#ab6a3d' })
+
+      -- TODO: Aggiungere anche gli altri??
+    end
+
+    -- Applica gli sfondi quando il tema cambia o all'avvio
+    vim.api.nvim_create_autocmd({ 'VimEnter', 'ColorScheme' }, {
+      pattern = '*',
+      callback = set_backgrounds,
+    })
+
+    -- Esegui subito la prima volta
+    set_backgrounds()
+  end,
+
 }

@@ -7,9 +7,45 @@ This repository contains a reproducible Neovim configuration built using **nixCa
 
 Usare `nix run .` o `nix build .` per testarlo.
 
+
 Quando fai `nix run .`, Nix scarica i pacchetti nel `/nix/store`. Non "sporcano" il tuo sistema operativo (non vanno in /usr/bin).
 
 Per pulire da questi pacchetti scaricati: mettere `nix-collect-garbadge` nella cartella di config di nvim e poi se si vuole eliminare la cartella `result/`
+
+# aaaa
+## aaaa
+### aaa
+#### aaaa
+##### aaaa
+###### aaa
+
+|tab1|tab2|
+|---|---|
+|aaa|bbbbb|
+
+
+```cpp
+int main () {
+    return 0;
+}
+```
+
+```rust 
+fn main -> Result<,> {
+    
+}
+```
+*aaa* **Aaaa** _aa_ __AAaa__
+- aaa
+1. aaa
+- [ ] aa
+- [x] aa
+- [~] aa
+[[README#Per testare in dev:]] link1
+#tag1
+#tag1
+[exmp](<README#What this guide covers:>)
+
 
 
 ---

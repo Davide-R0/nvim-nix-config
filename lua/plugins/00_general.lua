@@ -1,4 +1,65 @@
 return {
+  --{ -- idris 2
+  --  'ShinKage/idris2-nvim',
+  --  dependencies = {'neovim/nvim-lspconfig', 'MunifTanjim/nui.nvim'},
+  --  config = function()
+  --    require('idris2').setup({ })
+  --  end
+  --},
+
+  --'conform.nvim' 
+  
+
+  --(Do not work)
+  --{
+  --  'xzbdmw/colorful-menu.nvim',
+  --  on_plugin = { "nvim-cmp" },
+  --},
+  
+  -- Colors in #ffffff
+  {
+    'norcalli/nvim-colorizer.lua',
+    enabled = true,
+    opts = {},
+  },
+
+  -- Agda
+  {
+    'isovector/cornelis',
+    name = 'cornelis',
+    ft = 'agda',
+    --build = 'stack install',
+    build = "stack build",
+    dependencies = {'neovimhaskell/nvim-hs.vim', 'kana/vim-textobj-user'},
+    version = '*',
+    config = function()
+      -- Configurazione base
+      vim.g.cornelis_use_global_binary = 1 -- Importante: usa il cornelis installato da Nix!
+    end,
+  },
+
+  {
+    "iamcco/markdown-preview.nvim",
+    build = ":call mkdp#util#install()",
+    -- NOTE: for_cat is a custom handler that just sets enabled value for us,
+    -- based on result of nixCats('cat.name') and allows us to set a different default if we wish
+    -- it is defined in luaUtils template in lua/nixCatsUtils/lzUtils.lua
+    -- you could replace this with enabled = nixCats('cat.name') == true
+    -- if you didnt care to set a different default for when not using nix than the default you already set
+    lazy = true,
+    for_cat = 'markdown',
+    cmd = { "MarkdownPreview", "MarkdownPreviewStop", "MarkdownPreviewToggle", },
+    ft = "markdown",
+    keys = {
+      {"<leader>mp", "<cmd>MarkdownPreview <CR>", mode = {"n"}, noremap = true, desc = "markdown preview"},
+      {"<leader>ms", "<cmd>MarkdownPreviewStop <CR>", mode = {"n"}, noremap = true, desc = "markdown preview stop"},
+      {"<leader>mt", "<cmd>MarkdownPreviewToggle <CR>", mode = {"n"}, noremap = true, desc = "markdown preview toggle"},
+    },
+    before = function(plugin)
+      vim.g.mkdp_auto_close = 0
+    end,
+  },
+
   { -- Highlight todo, notes, etc in comments
     'folke/todo-comments.nvim',
     event = 'VimEnter',

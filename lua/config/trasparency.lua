@@ -46,14 +46,15 @@ vim.api.nvim_create_autocmd({"ColorScheme", "VimEnter"}, {
     -- Can be fouded with: Telescope hilights
     local groups = {
       -- === BASE EDITOR ===
-      "Normal", "NormalNC", 
+      "Normal", "NormalNC",
       --"Comment", "Constant", "Special", "Identifier",
       --"Statement", "PreProc", "Type", "Underlined", "Todo", "String", "Function",
       --"Conditional", "Repeat", "Operator", "Structure", "LineNr", "NonText",
       --"CursorLine", 
-      "CursorLineNr", "StatusLine", "StatusLineNC", "EndOfBuffer",
+      --"CursorLineNr",
+      "StatusLine", "StatusLineNC", "EndOfBuffer",
       -- Cmp
-      "CmpItemAbbr", "CmpItemAbbrDeprecated", "CmpItemAbbrMatch",
+      "CmpItemAbbr", "CmpItemAbbrDeprecated", "CmpItemAbbrMatch", "CmpDocumentation", "CmpDocumentationBorder",
       -- === FINESTRE FLOTTANTI E MENU ===
       "NormalFloat", "FloatBorder", "Pmenu", "PmenuBorder",
       -- === TELESCOPE (Ricerca file) ===
@@ -64,7 +65,7 @@ vim.api.nvim_create_autocmd({"ColorScheme", "VimEnter"}, {
       "WhichKey", "WhichKeyFloat", "WhichKeyGroup",
       -- === NEO-TREE / NVIM-TREE (File Explorer laterale) ===
       -- Se usi uno di questi due
-      "NvimTreeNormal", "NvimTreeNormalNC", "NvimTreeWinSeparator", "NeoTreeNormal", "NeoTreeNormalNC", "NeoTreeWinSeparator",
+      --"NvimTreeNormal", "NvimTreeNormalNC", "NvimTreeWinSeparator", "NeoTreeNormal", "NeoTreeNormalNC", "NeoTreeWinSeparator",
       -- === LAZY (Gestore Plugin) ===
       "LazyNormal", "MasonNormal",
       -- === DIAGNOSTICA (Errori nel codice) ===
