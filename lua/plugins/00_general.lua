@@ -8,19 +8,43 @@ return {
   --},
 
   --'conform.nvim' 
-  
+
 
   --(Do not work)
   --{
   --  'xzbdmw/colorful-menu.nvim',
   --  on_plugin = { "nvim-cmp" },
   --},
-  
+
   -- Colors in #ffffff
   {
     'norcalli/nvim-colorizer.lua',
     enabled = true,
     opts = {},
+  },
+
+  { -- Md table alignment
+    "dhruvasagar/vim-table-mode",
+    ft = { "markdown", "pandoc" }, -- Carica il plugin solo per i file Markdown (ottimizzazione Lazy)
+    cmd = { "TableModeToggle", "TableModeEnable" }, -- Oppure caricalo quando lanci il comando
+    init = function()
+      -- Imposta il carattere degli angoli a '|' invece che '+'
+      vim.g.table_mode_corner = "|"
+      -- Opzionale: Per avere bordi compatibili con GFM (GitHub Flavored Markdown)
+      vim.g.table_mode_corner_corner = "|"
+      vim.g.table_mode_header_fillchar = "-"
+      -- Opzionale: Disabilita i mapping di default se vanno in conflitto
+      vim.g.table_mode_disable_mappings = 1 -- Usare in command mode
+    end,
+
+    config = function()
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "markdown",
+        callback = function()
+          vim.cmd("TableModeEnable")
+        end,
+      })
+    end,
   },
 
   -- Agda

@@ -21,23 +21,22 @@ Per pulire da questi pacchetti scaricati: mettere `nix-collect-garbadge -d` nell
     1. `nix flake update` in globale (necessario?)
     2. rebuild globale del sistema
 
+---
 
-- aaa
-    - aaa
-        - aaa
-            - aaa
+Le branch servono per modificare impostazioni personali, come ad esempio obsidian.lua, colorscheme, ecc... e anche ad avere il proprio lock file nel caso servisse.
+
+---
 
 
-# aaaa
-## aaaa
-### aaa
-#### aaaa
-##### aaaa
-###### aaa
 
-|tab1|tab2|
-|---|---|
-|aaa|bbbbb|
+| tab1 | tab2  |
+|------|-------|
+| aaa  | bbbbb |
+
+| aaaa   | baas  |      |
+|--------|-------|------|
+| ciao   | caisa | casd |
+| sadsda |       |      |
 
 
 ```cpp

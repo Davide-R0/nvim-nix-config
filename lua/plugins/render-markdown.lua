@@ -83,7 +83,7 @@ return {
         end,
         left_pad = 0,
         right_pad = 0,
-        highlight = 'RenderMarkdownBullet',
+        highlight = 'RenderMarkdownUnchecked', --'RenderMarkdownBullet',
     },
 
     -- Checkboxes
@@ -193,10 +193,27 @@ return {
         skip_level = 1,
         skip_heading = true,
     },
+
+    -- Nascondi i metadati dei markdown
+    frontmatter = {
+        -- 'none': non fa nulla (lo vedi come testo)
+        -- 'full': nasconde tutto il blocco YAML
+        -- 'hidden': nasconde tutto ma lascia una riga sottile colorata (Consigliato)
+        hidden = true,
+    },
   },
 
---  -- AGGIUNGI QUESTA PARTE per modificare i colori di default
 --  config = function(_, opts)
+--    -- Per nascondere i metadati del markdown all'apertura
+--    vim.api.nvim_create_autocmd("FileType", {
+--      pattern = "markdown",
+--      callback = function()
+--        vim.opt_local.conceallevel = 2
+--      end,
+--    })
+--  end,
+
+--  -- AGGIUNGI QUESTA PARTE per modificare i colori di default
 --    require('render-markdown').setup(opts)
 --    -- Funzione per applicare gli highlight con sfondo
 --    local function set_backgrounds()

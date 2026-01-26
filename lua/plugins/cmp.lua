@@ -115,45 +115,64 @@ return {
         -- MAPPING COMUNI (Definiti qui per usarli ovunque)
         local function get_mappings(is_cmdline)
           return {
-            -- Navigazione Giù (Ctrl-n o Ctrl-j)
-            ['<C-n>'] = cmp.mapping(function(fallback)
-              if cmp.visible() then cmp.select_next_item() else fallback() end
-            end, { 'i', 'c', 's' }),
-            ['<C-j>'] = cmp.mapping(function(fallback)
-              if cmp.visible() then cmp.select_next_item() else fallback() end
-            end, { 'i', 'c', 's' }),
+            -- Navigazione stile Telescope/Readline
+            ['<C-n>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }), --cmp.SelectBehavior.Select Se non vuoi che mette il testo selezionato nel buffer fino a conferma
+            ['<C-p>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
 
-            -- Navigazione Su (Ctrl-p o Ctrl-k)
-            ['<C-p>'] = cmp.mapping(function(fallback)
-              if cmp.visible() then cmp.select_prev_item() else fallback() end
-            end, { 'i', 'c', 's' }),
-            ['<C-k>'] = cmp.mapping(function(fallback)
-              if cmp.visible() then cmp.select_prev_item() else fallback() end
-            end, { 'i', 'c', 's' }),
-
-            -- Scroll Docs
-            ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-            ['<C-f>'] = cmp.mapping.scroll_docs(4),
+            -- Scroll documentazione (come Telescope preview)
             ['<C-u>'] = cmp.mapping.scroll_docs(-4),
             ['<C-d>'] = cmp.mapping.scroll_docs(4),
 
-            -- Conferma
-            ['<C-y>'] = cmp.mapping.confirm { select = true },
-            ['<CR>'] = cmp.mapping.confirm { select = false }, -- Enter conferma solo se selezionato esplicitamente
+            -- Conferma (Stile standard Vim/Readline)
+            ['<C-y>'] = cmp.mapping.confirm({ select = true }),
+            -- Se vuoi che anche INVIO confermi, ma solo se hai già selezionato qualcosa
+            ['<CR>'] = cmp.mapping.confirm({ select = false }),
 
-            -- Trigger manuale
-            ['<C-Space>'] = cmp.mapping.complete {},
-
-            -- Annulla
+            -- Annulla (Stile Readline: Exit/Abort)
             ['<C-e>'] = cmp.mapping.abort(),
 
-            -- Snippet Jump (solo insert)
-            ['<C-l>'] = cmp.mapping(function()
-              if luasnip.expand_or_locally_jumpable() then luasnip.expand_or_jump() end
-            end, { 'i', 's' }),
-            ['<C-h>'] = cmp.mapping(function()
-              if luasnip.locally_jumpable(-1) then luasnip.jump(-1) end
-            end, { 'i', 's' }),
+            -- Trigger manuale
+            ['<C-Space>'] = cmp.mapping.complete({}),
+
+            -- -- Navigazione Giù (Ctrl-n o Ctrl-j)
+            -- ['<C-n>'] = cmp.mapping(function(fallback)
+            --   if cmp.visible() then cmp.select_next_item() else fallback() end
+            -- end, { 'i', 'c', 's' }),
+            -- ['<C-j>'] = cmp.mapping(function(fallback)
+            --   if cmp.visible() then cmp.select_next_item() else fallback() end
+            -- end, { 'i', 'c', 's' }),
+
+            -- -- Navigazione Su (Ctrl-p o Ctrl-k)
+            -- ['<C-p>'] = cmp.mapping(function(fallback)
+            --   if cmp.visible() then cmp.select_prev_item() else fallback() end
+            -- end, { 'i', 'c', 's' }),
+            -- ['<C-k>'] = cmp.mapping(function(fallback)
+            --   if cmp.visible() then cmp.select_prev_item() else fallback() end
+            -- end, { 'i', 'c', 's' }),
+
+            -- -- Scroll Docs
+            -- ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+            -- ['<C-f>'] = cmp.mapping.scroll_docs(4),
+            -- ['<C-u>'] = cmp.mapping.scroll_docs(-4),
+            -- ['<C-d>'] = cmp.mapping.scroll_docs(4),
+
+            -- -- Conferma
+            -- ['<C-y>'] = cmp.mapping.confirm { select = true },
+            -- ['<CR>'] = cmp.mapping.confirm { select = false }, -- Enter conferma solo se selezionato esplicitamente
+
+            -- -- Trigger manuale
+            -- ['<C-Space>'] = cmp.mapping.complete {},
+
+            -- -- Annulla
+            -- ['<C-e>'] = cmp.mapping.abort(),
+
+            -- -- Snippet Jump (solo insert)
+            -- ['<C-l>'] = cmp.mapping(function()
+            --   if luasnip.expand_or_locally_jumpable() then luasnip.expand_or_jump() end
+            -- end, { 'i', 's' }),
+            -- ['<C-h>'] = cmp.mapping(function()
+            --   if luasnip.locally_jumpable(-1) then luasnip.jump(-1) end
+            -- end, { 'i', 's' }),
           }
         end
 
