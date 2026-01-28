@@ -23,18 +23,21 @@ return {
         above = '▁',
         below = '▔',
         backgrounds = {
-            'RenderMarkdownH1Bg', 'RenderMarkdownH2Bg', 'RenderMarkdownH3Bg',
-            'RenderMarkdownH4Bg', 'RenderMarkdownH5Bg', 'RenderMarkdownH6Bg',
+          'RenderMarkdownH1Bg', 'RenderMarkdownH2Bg', 'RenderMarkdownH3Bg',
+          'RenderMarkdownH1Bg', 'RenderMarkdownH2Bg', 'RenderMarkdownH3Bg',
+          --'RenderMarkdownH4Bg', 'RenderMarkdownH5Bg', 'RenderMarkdownH6Bg',
         },
         foregrounds = {
-            'RenderMarkdownH1', 'RenderMarkdownH2', 'RenderMarkdownH3',
-            'RenderMarkdownH4', 'RenderMarkdownH5', 'RenderMarkdownH6',
+          'RenderMarkdownLink', 'RenderMarkdownLink', 'RenderMarkdownLink',
+          'RenderMarkdownLink', 'RenderMarkdownLink', 'RenderMarkdownLink',
+          --    'RenderMarkdownH1', 'RenderMarkdownH2', 'RenderMarkdownH3',
+          --    'RenderMarkdownH4', 'RenderMarkdownH5', 'RenderMarkdownH6',
         },
     },
 
     -- Paragraphs 
     paragraph = {
-        enabled = true,
+        enabled = false,
         left_margin = 0,
         min_width = 0,
     },
@@ -83,7 +86,7 @@ return {
         end,
         left_pad = 0,
         right_pad = 0,
-        highlight = 'RenderMarkdownUnchecked', --'RenderMarkdownBullet',
+        highlight = 'RenderMarkdownH1',--'RenderMarkdownUnchecked', --'RenderMarkdownBullet',
     },
 
     -- Checkboxes
@@ -91,11 +94,11 @@ return {
         enabled = true,
         unchecked = {
             icon = '',
-            highlight = 'RenderMarkdownUnchecked',
+            highlight = 'RenderMarkdownH1',--'RenderMarkdownUnchecked',
         },
         checked = {
             icon = '󰄲',
-            highlight = 'RenderMarkdownChecked',
+            highlight = 'RenderMarkdownH1', --'RenderMarkdownChecked',
         },
         custom = {
             todo = { raw = '[-]', rendered = '󰥔 ', highlight = 'RenderMarkdownH3', scope_highlight = nil },
@@ -203,8 +206,19 @@ return {
     },
   },
 
---  config = function(_, opts)
---    -- Per nascondere i metadati del markdown all'apertura
+  config = function(_, opts)
+    require('render-markdown').setup(opts)
+    vim.api.nvim_create_autocmd("ColorScheme", {
+      callback = function()
+        local h1_hl = vim.api.nvim_get_hl(0, { name = "RenderMarkdownH1", link = false })
+        if h1_hl.fg then
+          vim.api.nvim_set_hl(0, "@markup.strong.markdown_inline", { fg = h1_hl.fg, bold = true })
+          vim.api.nvim_set_hl(0, "@markup.italic.markdown_inline", { fg = h1_hl.fg, italic = true })
+        end
+      end,
+    })
+  end,
+    --    -- Per nascondere i metadati del markdown all'apertura
 --    vim.api.nvim_create_autocmd("FileType", {
 --      pattern = "markdown",
 --      callback = function()
