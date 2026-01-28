@@ -208,6 +208,8 @@
         nvim-web-devicons # For special icons (Lualine, Telescope, Oil, ...)
         nvim-autopairs # autopairs
         nvim-colorizer-lua # for colors in #ffffff
+        vim-table-mode # md table formatting
+        csvview-nvim # csv viewer
 
         # Linter
         nvim-lint

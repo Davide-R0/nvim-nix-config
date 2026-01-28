@@ -49,13 +49,15 @@ return {
 
     telescope.setup {
       defaults = {
-        initial_mode = "normal",
+        --initial_mode = "normal",
         mappings = {
           i = {
-            ['<C-k>'] = actions.move_selection_previous, -- Muovi su
-            ['<C-j>'] = actions.move_selection_next,     -- Muovi giù
-            ['<C-u>'] = actions.preview_scrolling_up,    -- Scroll anteprima su
-            ['<C-d>'] = actions.preview_scrolling_down,  -- Scroll anteprima giù
+            ['<C-y>'] = actions.select_default, -- Select
+          --  examples:
+          --  ['<C-k>'] = actions.move_selection_previous, -- Muovi su
+          --  ['<C-j>'] = actions.move_selection_next,     -- Muovi giù
+          --  ['<C-u>'] = actions.preview_scrolling_up,    -- Scroll anteprima su
+          --  ['<C-d>'] = actions.preview_scrolling_down,  -- Scroll anteprima giù
           },
           n = {
              ['q'] = actions.close,
@@ -89,7 +91,6 @@ return {
     -- ==========================================
     -- KEYBINDINGS
     -- ==========================================
-    vim.keymap.set('n', '<leader>nm', function() telescope.extensions.manix.manix() end, { desc = '[N]ix [M]anix Options' })
 
     vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
     vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
@@ -101,14 +102,19 @@ return {
     vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
     vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files' })
     vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
-    -- Old keybindings
-    vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Find Files (Alias)' })
-    vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Grep (Alias)' })
-    vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Buffers (Alias)' })
-    vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Help (Alias)' })
-    vim.keymap.set('n', '<leader>ld', builtin.diagnostics, { desc = 'Lsp Diagnostics (Alias)' })
+    vim.keymap.set('n', '<leader>sb', builtin.buffers, { desc = '[S]earch existing [B]uffers' })
+    vim.keymap.set('n', '<leader>sk', builtin.commands, { desc = '[S]earch [K]ommands' })
+    -- Git Mappings
+    vim.keymap.set('n', '<leader>gc', builtin.git_commits, { desc = '[G]it [C]ommits' })
+    vim.keymap.set('n', '<leader>gs', builtin.git_status, { desc = '[G]it [S]tatus' })
+    vim.keymap.set('n', '<leader>gb', builtin.git_branches, { desc = '[G]it [B]ranches' })
+    -- Tags Mappings
+    vim.keymap.set('n', '<leader>st', builtin.tags, { desc = '[S]earch [T]ags' })
+    vim.keymap.set('n', '<leader>sd', builtin.lsp_document_symbols, { desc = '[S]earch [D]ocument Symbols' })
     -- Media Files
-    vim.keymap.set('n', '<leader>fm', ':Telescope media_files<CR>', { desc = 'Find Media' })
+    vim.keymap.set('n', '<leader>sm', ':Telescope media_files<CR>', { desc = '[S]earch [M]edia' })
+    -- Manix options
+    vim.keymap.set('n', '<leader>nm', function() telescope.extensions.manix.manix() end, { desc = '[N]ix [M]anix Options' })
 
     -- Configurazione avanzata per ricerca nel buffer corrente 
     vim.keymap.set('n', '<leader>/', function()
