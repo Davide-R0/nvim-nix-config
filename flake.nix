@@ -52,16 +52,51 @@
   # see :help nixCats.flake.outputs
   outputs = { self, nixpkgs, nixCats, ... }@inputs: let
     inherit (nixCats) utils;
-  luaPath = ./.;
-  forEachSystem = utils.eachSystem nixpkgs.lib.platforms.all;
-  # the following extra_pkg_config contains any values
-  # which you want to pass to the config set of nixpkgs
-  # import nixpkgs { config = extra_pkg_config; inherit system; }
-  # will not apply to module imports
-  # as that will have your system values
-  extra_pkg_config = {
-    allowUnfree = true;
-  };
+    luaPath = ./.;
+    forEachSystem = utils.eachSystem nixpkgs.lib.platforms.all;
+
+#    system = "x86_64-linux";
+#    pkgs = nixpkgs.legacyPackages.${system};
+#    # Vim spell check
+#    vim-spell-it = pkgs.runCommand "vim-spell-it" { } ''
+#      mkdir -p $out/spell
+#      
+#      ln -s ${pkgs.fetchurl {
+#      url = "https://ftp.nluug.nl/pub/vim/runtime/spell/it.utf-8.spl";
+#      sha256 = "04vlmri8fsza38w7pvkslyi3qrlzyb1c3f0a1iwm6vc37s8361yq"; 
+#      }} $out/spell/it.utf-8.spl
+#      
+#      ln -s ${pkgs.fetchurl {
+#      url = "https://ftp.nluug.nl/pub/vim/runtime/spell/it.utf-8.sug";
+#      sha256 = "0jnf4hkpr4hjwpc8yl9l5dddah6qs3sg9ym8fmmr4w4jlxhigfz0";
+#      }} $out/spell/it.utf-8.sug
+#    '';
+#    vim-spell-en = pkgs.runCommand "vim-spell-en" { } ''
+#      mkdir -p $out/spell
+#
+#      # 1. Scarica SPL da GitHub (RAW)
+#      ln -s ${pkgs.fetchurl {
+#        url = "https://ftp.nluug.nl/pub/vim/runtime/spell/en.utf-8.spl";
+#        # Metti questo hash vuoto. Al rebuild ti darà quello VERO e STABILE.
+#        sha256 = "0w1h9lw2c52is553r8yh5qzyc9dbbraa57w9q0r9v8xn974vvjpy"; 
+#      }} $out/spell/en.utf-8.spl   # <--- NOTA: en.utf-8.spl
+#
+#      # 2. Scarica SUG da GitHub (RAW)
+#      ln -s ${pkgs.fetchurl {
+#        url = "https://ftp.nluug.nl/pub/vim/runtime/spell/en.utf-8.sug";
+#        # Metti questo hash vuoto.
+#        sha256 = "1v1jr4rsjaxaq8bmvi92c93p4b14x2y1z95zl7bjybaqcmhmwvjv";
+#      }} $out/spell/en.utf-8.sug   # <--- NOTA: en.utf-8.sug
+#    '';
+    
+    # the following extra_pkg_config contains any values
+    # which you want to pass to the config set of nixpkgs
+    # import nixpkgs { config = extra_pkg_config; inherit system; }
+    # will not apply to module imports
+    # as that will have your system values
+    extra_pkg_config = {
+      allowUnfree = true;
+    };
   # management of the system variable is one of the harder parts of using flakes.
 
   # so I have done it here in an interesting way to keep it out of the way.
@@ -174,9 +209,35 @@
         #ollama-cuda
         #ollama-vulkan
         #ollama-rocm
-
+        
+        #################
         # Linters
-        markdownlint-cli
+        #################
+        # Rust, lean4, hanno linter integrati
+        # --- Markdown ---
+        markdownlint-cli       # Comando: markdownlint
+        # --- C / C++ ---
+        cppcheck               # Analisi statica
+        # Nota: Spesso per C/C++ si usa clang-tidy (incluso in llvmPackages.clang-unwrapped o simili)
+        # --- Bash ---
+        shellcheck             # Lo standard per bash
+        # --- Lua ---
+        selene                 # Linter moderno per Lua (alternativa a luacheck)
+        # --- Python ---
+        python311Packages.flake8 # Il linter classico per Python
+        # --- Nix ---
+        statix                 # Linter specifico per trovare anti-pattern in Nix
+        deadnix                # Trova codice Nix non utilizzato
+        # --- Latex ---
+        #chktex   # Dovrebbe essere già dentro il pachcetto texlive
+        # --- Altri utili ---
+        harper # linter per la lingua in rust
+        #ltex-ls # Linter per la lingua
+
+        #vale                   # Linter per la prosa (inglese) molto potente
+        hunspell          # Motore per il controllo ortografico
+        hunspellDicts.it_IT # Dizionario italiano
+        hunspellDicts.en_US # Dizionario inglese
       ];
       kickstart-debug = [
         #delve #?
@@ -210,6 +271,11 @@
         nvim-colorizer-lua # for colors in #ffffff
         vim-table-mode # md table formatting
         csvview-nvim # csv viewer
+        actions-preview-nvim # Actions preview
+        
+        # Speller
+        #vim-spell-it  # manual
+        #vim-spell-en
 
         # Linter
         nvim-lint

@@ -4,16 +4,29 @@ return {
   dependencies = { "nvim-lua/plenary.nvim", "nvim-treesitter/nvim-treesitter", "nvim-telescope/telescope.nvim" },
 
   config = function()
+    local function get_gemini_key()
+      local env_file = vim.fn.expand("~/.config/nvim/.env") -- Cambia il percorso se serve
+      if vim.fn.filereadable(env_file) == 1 then
+        for line in io.lines(env_file) do
+          local key, value = line:match("([^=]+)=(.+)")
+          if key == "GEMINI_API_KEY" then
+            return value
+          end
+        end
+      end
+      return ""
+    end
+
     require("codecompanion").setup({
       strategies = {
         -- 'chat': Quando apri la finestra di chat laterale
         chat = {
-          adapter = "ollama", -- Cambia in "gemini" se preferisci Google
+          adapter = "gemini", -- Cambia in "gemini" se preferisci Google
         },
 
         -- 'agent': Per task complessi che richiedono tools
         agent = {
-          adapter = "ollama",
+          adapter = "gemini",
         },
 
         -- For Lean
@@ -26,13 +39,24 @@ return {
         --end,
         -- 'inline': Quando chiedi di generare codice nel buffer
         inline = {
-          adapter = "ollama", -- Cambia in "gemini" se preferisci Google
+          adapter = "gemini", -- Cambia in "gemini" se preferisci Google
         },
       },
 
       -- CONFIGURAZIONE ADAPTER (I Motori AI)
       adapters = {
-
+        gemini = function()
+          return require("codecompanion.adapters").extend("gemini", {
+            env = {
+              api_key = get_gemini_key(),
+            },
+            schema = {
+              model = {
+                default = "gemini-1.5-flash",
+              },
+            },
+          })
+        end,
         -- 1. OLLAMA (Locale)
         --ollama = function()
         --  return require("codecompanion.adapters").extend("ollama", {

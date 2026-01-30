@@ -45,7 +45,12 @@ return {
   config = function()
     vim.diagnostic.config({
       signs = {
-        text = { [vim.diagnostic.severity.ERROR] = " ", [vim.diagnostic.severity.WARN] = " ", [vim.diagnostic.severity.HINT] = "󰠠 ", [vim.diagnostic.severity.INFO] = " " },
+        text = { 
+          [vim.diagnostic.severity.ERROR] = " ",
+          [vim.diagnostic.severity.WARN] = " ",
+          [vim.diagnostic.severity.HINT] = "󰠠 ",
+          [vim.diagnostic.severity.INFO] = " ",
+        },
         -- Opzionale: map per le priorità o per le linee, ma 'text' è quello che ti serve
       },
       virtual_text = {
@@ -137,7 +142,7 @@ return {
       settings = {
         Lua = {
           completion = { callSnippet = 'Replace' },
-          diagnostics = { globals = { 'nixCats' }, disable = { 'missing-fields' } },
+          diagnostics = { globals = { 'nixCats', 'vim' }, disable = { 'missing-fields' } },
         },
       },
     }
@@ -201,6 +206,98 @@ return {
         }
       }
     }
+
+
+
+--    -- 2. LTeX per la grammatica
+--    servers.ltex = {
+--      capabilities = capabilities,
+--      -- Aggiungi questo flag per dire a lspconfig che ltex-ls supporta i file gitcommit e markdown
+--      filetypes = { "markdown", "tex", "bib", "latex", "text", "gitcommit" },
+--
+--      on_attach = function(client, bufnr)
+--        -- 2. Caricamento PROTETTO di ltex_extra
+--        -- Se Nix non lo ha caricato, 'ok' sarà false e non crasherà tutto
+--        local ok, ltex_extra = pcall(require, "ltex_extra")
+--
+--        if ok then
+--          ltex_extra.setup {
+--            load_langs = { "it-IT", "en-US" },
+--            init_check = true,
+--            -- 3. Passiamo la stringa, NON la funzione
+--            path = dict_path,
+--            log_level = "trace",
+--            server_opts = nil -- Corretto, lasciamo che lspconfig gestisca il server
+--          }
+--        else
+--          vim.notify("ltex_extra non trovato! Verifica il flake.nix", vim.log.levels.WARN)
+--        end
+--      end,
+--      settings = {
+--        ltex = {
+--          language = "it-IT",
+--          --language = "auto",
+--          --diagnosticSeverity = "information",
+--          additionalRules = {
+--            enablePickyRules = true,
+--            motherTongue = "it",
+--          },
+--          disabledRules = {
+--            --it = { "APOS_TYP", "FRENCH_WHITESPACE" } 
+--          },
+--        }
+--      }
+--    }
+
+    local harper_dict = vim.fn.stdpath("config") .. "/dict/harper_user.txt"
+    local dict_dir = vim.fn.stdpath("config") .. "/dict"
+    if vim.fn.isdirectory(dict_dir) == 0 then
+      vim.fn.mkdir(dict_dir, "p")
+    end
+    if vim.fn.filereadable(harper_dict) == 0 then
+      io.open(harper_dict, "a"):close()
+    end
+    --servers.harper_ls = {
+    --  capabilities = capabilities,
+    --  --filetypes = { "markdown", "tex", "bib", "latex", "text", "gitcommit" },
+    --  settings = {
+    --    ["harper-ls"] = {
+    --      userDictPath = harper_dict, --"~/.config/nvim/dict/harper.txt",
+    --      -- Impostazioni Linguistiche
+    --      -- Harper prova a indovinare la lingua, ma puoi isolarlo
+    --      --iso639_1 = "it", -- Forza italiano come lingua principale (opzionale)
+
+    --      linters = {
+    --        SpellCheck = true,
+    --        SpelledNumbers = false,
+    --        AnA = true,-- Ti avvisa se usi parole troppo vecchie (in inglese)
+    --        SentenceCapitalization = true,
+    --        UnclosedQuotes = true,
+    --        WrongQuotes = false,
+    --        LongSentences = true,
+    --        RepeatedWords = true,
+    --        Spaces = true,
+    --        Matcher = true,
+    --        CorrectNumberSuffix = true
+    --      },
+
+    --      -- Code Actions
+    --      codeActions = {
+    --        ForceStable = true, -- Stabilizza i suggerimenti
+    --      },
+    --      markdown = {
+    --        ignoredLintsPath = true,
+    --        IgnoreLinkTitle = true,
+    --      },
+    --      diagnosticSeverity = "hint",
+    --      --isolateEnglish = false, --??
+    --      --dialect = "American",
+    --      maxFileLength = 120000,
+    --      ignoredLintsPath = "",
+    --      excludePatterns = {}
+    --    }
+    --  }
+    --};
 
     -- Markdown oxide
     servers.markdown_oxide = {

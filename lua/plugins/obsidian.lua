@@ -58,9 +58,14 @@ return {
               substitutions = {
                 -- Qui puoi creare variabili magiche.
                 -- Esempio: se nel template scrivi {{giorno_settimana}}
-                giorno_settimana = function()
-                  return os.date("%A") 
-                end
+                --giorno_settimana = function()
+                --  return os.date("%A")
+                --end
+                ---- TODO:
+                --date:dddd = 
+                --D = 
+                --MMMM =  
+                --YYYY = 
               },
             },
             daily_notes = {
@@ -73,17 +78,16 @@ return {
               date_format = "%Y-%m-%d",
               -- Optional, if you want to change the date format of the default alias of daily notes.
               alias_format = "%B %-d, %Y", -- Che formato vengono viste? che titolo hanno?
-              default_tags = { "daily-notes" },
+              default_tags = { "daily-notes", "planning" },
               -- Optional, if you want to automatically insert a template from your template directory like 'daily.md'
               template = "daily_note_template.md"
             },
-            -- NOTE: Sono definiti o devono essere definiti qui, per cosa?
             -- Specify how to handle attachments.
             attachments = {
               -- The default folder to place images in via `:ObsidianPasteImg`.
               -- If this is a relative path it will be interpreted as relative to the vault root.
               -- You can always override this per image by passing a full path to the command instead of just a filename.
-              folder = "05_resources/03_pictures",  -- This is the default
+              folder = "05_resources/03_pictures",
 
               -- Optional, customize the default name or prefix when pasting images via `:ObsidianPasteImg`.
               ---@return string
@@ -110,31 +114,66 @@ return {
             ---@return string|obsidian.Path The full path to the new note.
             note_path_func = function(spec)
               local path
-              -- CASO 1: "." (Current Dir / Oil)
-              if spec.title and spec.title:sub(1,1) == "." then
+              local vault_root = vim.fn.expand("~/00_Omnis/")
+
+              -- Estraiamo il titolo se esiste
+              --local title = (spec.title or ""):gsub(" ", "_"):gsub("[^A-Za-z0-9_-]", ""):lower()
+              -- spec.id adesso contiene già "titolo_pulito_con_underscore" 
+              -- perché lo abbiamo sistemato in note_id_func
+              local title = tostring(spec.id)
+              --title = title:gsub(" ", "_"):gsub("[^A-Za-z0-9-]", ""):lower()
+              -- LOGICA DI SMISTAMENTO (Basata sul titolo o prefissi)
+              if title:match("^atlas") then
+                -- se il titolo inizia con atlas
+                path = vault_root .. "01_atlas/" .. tostring(spec.id)
+
+              -- NOTE: for planning note use the automatic daily note creation, and fot the week and month go into the folder and create note with `.`
+              --elseif title:lower():match("^planning") then
+              --  path = vault_root .. "02_planning/" .. tostring(spec.id)
+
+              elseif title:match("^icebox") then
+                path = vault_root .. "03_icebox/" .. tostring(spec.id)
+
+              elseif title:match("^note") then
+                path = vault_root .. "04_atomic_notes/" .. tostring(spec.id)
+
+              elseif title:sub(1,1) == "." then
+                -- Nella cartella corrente
                 local current_buffer_dir = vim.fn.expand("%:p:h")
                 if current_buffer_dir:match("^oil://") then
                   current_buffer_dir = current_buffer_dir:gsub("^oil://", "")
                 end
-                if current_buffer_dir == "" then current_buffer_dir = vim.fn.getcwd() end
-                path = current_buffer_dir .. "/" .. tostring(spec.id)
+                path = (current_buffer_dir == "" and vim.fn.getcwd() or current_buffer_dir) .. "/" .. tostring(spec.id)
 
-                -- CASO 2: "/" (Sottocartella esplicita)
-              elseif spec.title and spec.title:match("/") then
-                local parent_dir = vim.fn.fnamemodify(spec.title, ":h")
-                path = vim.fn.expand("~/00_Omnis/") .. parent_dir .. "/" .. tostring(spec.id)
-
-                -- CASO 3: "MOC"
-              elseif spec.title and spec.title:upper():match("MOC$") then
-                path = vim.fn.expand("~/00_Omnis/00_MOCs/") .. tostring(spec.id)
-
-                -- CASO 4: Default
               else
+                -- Default: usa la subdir definita in notes_subdir ("04_atomic_notes")
                 path = tostring(spec.dir / tostring(spec.id))
               end
 
-              -- Assicuriamoci che path sia una stringa prima di passarlo a normalize
               return vim.fs.normalize(tostring(path)) .. ".md"
+--
+--              local path
+--              -- CASO 1: "." (Current Dir / Oil)
+--              if spec.title and spec.title:sub(1,1) == "." then
+--                local current_buffer_dir = vim.fn.expand("%:p:h")
+--                if current_buffer_dir:match("^oil://") then
+--                  current_buffer_dir = current_buffer_dir:gsub("^oil://", "")
+--                end
+--                if current_buffer_dir == "" then current_buffer_dir = vim.fn.getcwd() end
+--                path = current_buffer_dir .. "/" .. tostring(spec.id)
+--
+--                -- CASO 2: "/" (Sottocartella esplicita)
+--              elseif spec.title and spec.title:match("/") then
+--                local parent_dir = vim.fn.fnamemodify(spec.title, ":h")
+--                path = vim.fn.expand("~/00_Omnis/") .. parent_dir .. "/" .. tostring(spec.id)
+--
+--                -- CASO 4: Default
+--              else
+--                path = tostring(spec.dir / tostring(spec.id))
+--              end
+--
+--              -- Assicuriamoci che path sia una stringa prima di passarlo a normalize
+--              return vim.fs.normalize(tostring(path)) .. ".md"
             end,
 
           },
@@ -353,58 +392,78 @@ return {
     vim.keymap.set("n", "<leader>ol", "<cmd>Obsidian links<cr>", { desc = "[O]bsidian [L]inks" })
     -- Ricerca Tag
     vim.keymap.set("n", "<leader>otg", "<cmd>Obsidian tags<cr>", { desc = "[O]bsidian [T]a[G]s" })
+    -- Cerca e crea note daily
+    vim.keymap.set("n", "<leader>od", "<cmd>Obsidian dailies<cr>", { desc = "[O]bsidian [D]ailies" })
+    vim.keymap.set("n", "<leader>odtd", "<cmd>Obsidian today<cr>", { desc = "[O]bsidian [D]ailies" })
+    vim.keymap.set("n", "<leader>ody", "<cmd>Obsidian yesterday<cr>", { desc = "[O]bsidian [D]ailies" })
+    vim.keymap.set("n", "<leader>odtm", "<cmd>Obsidian tomorrow<cr>", { desc = "[O]bsidian [D]ailies" })
     -- Gestione Checkbox (molto utile nelle dailies)
-    vim.keymap.set("n", "<leader>och", "<cmd>Obsidian toggle_checkbox<cr>", { desc = "[O]bsidian [C]heckbox Toggle" })
+    --vim.keymap.set("n", "<leader>och", "<cmd>Obsidian toggle_checkbox<cr>", { desc = "[O]bsidian [C]heckbox Toggle" })
     -- Utility Avanzate
     vim.keymap.set("n", "<leader>orn", "<cmd>Obsidian rename<cr>", { desc = "[O]bsidian [R]ename note and links" })
     vim.keymap.set("n", "<leader>opi", "<cmd>Obsidian paste_img<cr>", { desc = "[O]bsidian [P]aste [I]mage" })
     vim.keymap.set("n", "<leader>og", "<cmd>Obsidian open<cr>", { desc = "[O]bsidian [G]ui open" })
     -- Workspace (Se ne hai più di uno)
     vim.keymap.set("n", "<leader>ow", "<cmd>Obsidian workspace<cr>", { desc = "[O]bsidian [W]orkspace Switch" })
-    -- Apri il link in un nuovo Tab
-    vim.keymap.set("n", "<leader>otb", function()
-      if require("obsidian").util.cursor_on_markdown_link() then
-            vim.cmd("tabnew") 
-            vim.cmd("ObsidianFollowLink")
-        end
-    end, { desc = "[O]bsidian open in [T][B]ab" })
-    -- Apri il link in uno split verticale
-    vim.keymap.set("n", "<leader>ovs", function()
-      if require("obsidian").util.cursor_on_markdown_link() then
-            vim.cmd("vsplit") 
-            vim.cmd("ObsidianFollowLink")
-        end
-    end, { desc = "[O]bsidian open in [V][S]plit" })
-    -- Apri il link in uno split orizzontale
-    vim.keymap.set("n", "<leader>ohs", function()
-      if require("obsidian").util.cursor_on_markdown_link() then
-            vim.cmd("split") 
-            vim.cmd("ObsidianFollowLink")
-        end
-    end, { desc = "[O]bsidian open in [H][S]plit" })
-
     -- Follow Link
-    vim.keymap.set("n", "gf", function()
-      if require('obsidian').util.cursor_on_markdown_link() then
-        return "<cmd>Obsidian follow_link<cr>"
-      else
-        return "gf"
-      end
-    end, { noremap = false, expr = true, desc = "Follow Anchor Link" })
+    vim.keymap.set("n", "gf", "<cmd>Obsidian follow_link vsplit<cr>", { desc = "Follow Anchor Link" })
+    vim.keymap.set("n", "<leader>ovs", "<cmd>Obsidian follow_link vsplit<cr>", { desc = "Open link in vsplit" })
+    vim.keymap.set("n", "<leader>ohs", "<cmd>Obsidian follow_link hsplit<cr>", { desc = "Open link in hsplit" })
+    --vim.keymap.set("n", "<leader>otb", "<cmd>Obsidian<cr>", { desc = "Open link in new tab" }) -- Ancora non esiste
 
-    -- Smart Action (Invio per checkbox o seguire link)
-    vim.keymap.set("n", "<cr>", function()
-      if require('obsidian').util.smart_action() then
-        return
-      else
-        -- Questo permette di mantenere il comportamento di Invio standard se non sei su un link/checkbox
-        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<cr>", true, false, true), "n", true)
-      end
-    end, { desc = "Obsidian Smart Action", noremap = false, expr = true, buffer = true })
+    -- Go to the next/previous aviable link: `[o`, `]o`
+
+--    -- Alredy settes as default
+--    -- Smart Action (Invio per checkbox o seguire link)
+--    vim.keymap.set("n", "<cr>", function()
+--      if require('obsidian').util.smart_action() then
+--        return
+--      else
+--        -- Questo permette di mantenere il comportamento di Invio standard se non sei su un link/checkbox
+--        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<cr>", true, false, true), "n", true)
+--      end
+--    end, { desc = "Obsidian Smart Action", noremap = false, expr = true, buffer = true })
 
     -- Visual Mode: Crea link da selezione
     vim.keymap.set("v", "<leader>ol", "<cmd>Obsidian link<cr>", { desc = "Link selection" })
     vim.keymap.set("v", "<leader>onl", "<cmd>Obsidian link_new<cr>", { desc = "New note from selection" })
+
+    -- Note personalizzate
+    vim.keymap.set("n", "<leader>ona", function()
+      local title = vim.fn.input("Titolo Atlas: ")
+      if title ~= "" then
+        -- Crea la nota con il prefisso 'planning' per triggerare il path_func sopra
+        vim.cmd("Obsidian new atlas " .. title)
+        -- Aspetta un attimo che il buffer carichi e applica il template
+        vim.defer_fn(function()
+          vim.cmd("Obsidian template atlas_template.md")
+        end, 100)
+      end
+    end, { desc = "[O]bsidian [N]ew [A]tlas" })
+
+    vim.keymap.set("n", "<leader>oni", function()
+      local title = vim.fn.input("Titolo Icebox: ")
+      if title ~= "" then
+        -- Crea la nota con il prefisso 'planning' per triggerare il path_func sopra
+        vim.cmd("Obsidian new icebox " .. title)
+        -- Aspetta un attimo che il buffer carichi e applica il template
+        vim.defer_fn(function()
+          vim.cmd("Obsidian template icebox_template.md")
+        end, 100)
+      end
+    end, { desc = "[O]bsidian [N]ew [I]cebox" })
+
+    vim.keymap.set("n", "<leader>onn", function()
+      local title = vim.fn.input("Titolo Atomic note: ")
+      if title ~= "" then
+        -- Crea la nota con il prefisso 'planning' per triggerare il path_func sopra
+        vim.cmd("Obsidian new note " .. title)
+        -- Aspetta un attimo che il buffer carichi e applica il template
+        vim.defer_fn(function()
+          vim.cmd("Obsidian template atomic_note_template.md")
+        end, 100)
+      end
+    end, { desc = "[O]bsidian [N]ew atomic [N]ote" })
 
   end,
 }

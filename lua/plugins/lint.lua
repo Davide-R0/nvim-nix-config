@@ -1,13 +1,34 @@
 return {
   { -- Linting
     'mfussenegger/nvim-lint',
+
     -- NOTE: nixCats: return true only if category is enabled, else false
     enabled = true,--require('nixCatsUtils').enableForCategory("kickstart-lint")
+
     event = { 'BufReadPre', 'BufNewFile' },
+
     config = function()
       local lint = require 'lint'
       lint.linters_by_ft = {
-        --markdown = { 'markdownlint' },
+        -- Vale lint: `.vale.ini` (da aggiugnere nel root del progetto):
+        -- --
+        -- StylesPath = styles
+        -- MinAlertLevel = suggestion
+        -- [*.{md,txt}]
+        -- BasedOnStyles = Vale
+        -- # Qui potresti aggiungere stili specifici per l'italiano se ne scarichi
+        -- --
+        markdown = { 'markdownlint' }, -- Also grammar checking
+        sh = { 'shellcheck' },
+        bash = { 'shellcheck' },
+        lua = { 'selene' },
+        python = { 'flake8' },
+        nix = { 'statix', 'deadnix' },
+        cpp = { 'cppcheck' },
+        c = { 'cppcheck' },
+        -- Per i file di testo generici
+        --text = { 'vale' },  -- Normal text files
+        tex = { 'chktex' }, -- For latex
       }
 
       -- To allow other plugins to add linters to require('lint').linters_by_ft,
@@ -41,6 +62,25 @@ return {
       -- lint.linters_by_ft['ruby'] = nil
       -- lint.linters_by_ft['terraform'] = nil
       -- lint.linters_by_ft['text'] = nil
+
+      -- CONFIGURAZIONE AVANZATA ARGOMENTI
+      -- Prendiamo la definizione base di selene
+      local selene = lint.linters.selene
+      -- Definiamo un percorso per una config globale (es. nella tua cache o config dir)
+      local global_selene_conf = vim.fn.stdpath("config") .. "/selene.toml"
+      -- Creiamo il file se non esiste (così non devi gestirlo manualmente)
+      if vim.fn.filereadable(global_selene_conf) == 0 then
+        local f = io.open(global_selene_conf, "w")
+        if f then
+          -- Scriviamo la config "hardcoded" nel file
+          f:write('std = "vim"\n[config]\nglobals = ["vim", "nixCats", "require"]')
+          f:close()
+        end
+      end
+      -- Diciamo a selene di usare SEMPRE questo file, ovunque tu sia
+      -- "vim.list_extend" serve per non cancellare gli argomenti di default
+      selene.args = vim.list_extend({ "--config", global_selene_conf }, selene.args)
+
 
       -- Create autocommand which carries out the actual linting
       -- on the specified events.

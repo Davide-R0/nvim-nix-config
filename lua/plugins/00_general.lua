@@ -15,6 +15,12 @@ return {
   --  'xzbdmw/colorful-menu.nvim',
   --  on_plugin = { "nvim-cmp" },
   --},
+  { -- Code actions
+    "aznhe21/actions-preview.nvim",
+    config = function()
+      vim.keymap.set({ "v", "n" }, '<leader>ca', require("actions-preview").code_actions)
+    end,
+  },
 
   -- Colors in #ffffff
   {
@@ -130,6 +136,8 @@ return {
     ft = 'lua',
     opts = {
       library = {
+        -- Carica i tipi per l'API di Neovim (risolve il problema 'vim')
+        { path = "luvit-meta/library", words = { "vim%.uv" } },
         -- adds type hints for nixCats global
         { path = (nixCats.nixCatsPath or '') .. '/lua', words = { 'nixCats' } },
       },

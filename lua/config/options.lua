@@ -4,7 +4,29 @@ local set = vim.opt
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 --vim.opt.mouse = 'a'
-
+--
+---- Attiva il controllo ortografico
+--vim.opt.spell = true
+---- Imposta le lingue (Italiano come principale, Inglese come secondario)
+---- Neovim cercherà di capire quale usare o le userà entrambe
+--vim.opt.spelllang = { 'it', 'en' }
+---- Dove salvare le parole che aggiungi (con 'zg')
+---- La cartella deve esistere!
+--local spell_dir = vim.fn.stdpath("config") .. "/spell"
+--if vim.fn.isdirectory(spell_dir) == 0 then
+--  vim.fn.mkdir(spell_dir, "p")
+--end
+---- Definisce il file del dizionario personale
+--vim.opt.spellfile = spell_dir .. "/it.utf-8.add"
+--vim.keymap.set("n", "z=", function()
+--  require("telescope.builtin").spell_suggest(require("telescope.themes").get_cursor({
+--    previewer = false,
+--    layout_config = {
+--      width = 0.3,
+--      height = 0.4,
+--    }
+--  }))
+--end, { desc = "Suggerimenti Ortografici" })
 
 -- This is necessary to make nvim expand the bash aliases when it execute commands
 vim.o.shell = "bash"

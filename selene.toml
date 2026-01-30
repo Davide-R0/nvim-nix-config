@@ -1,0 +1,3 @@
+std = "vim"
+[config]
+globals = ["vim", "nixCats", "require"]
