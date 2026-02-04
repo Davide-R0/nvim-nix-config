@@ -34,7 +34,7 @@ return {
           --    'RenderMarkdownH4', 'RenderMarkdownH5', 'RenderMarkdownH6',
         },
     },
-
+    --latex = '@markup.math',
     -- Paragraphs 
     paragraph = {
         enabled = false,

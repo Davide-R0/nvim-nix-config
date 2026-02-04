@@ -169,6 +169,9 @@
         texlivePackages.latexindent
         # Markdown
         markdown-oxide
+        # For latex preview in md:
+        python313Packages.pylatexenc # provided: latex2text latexencode latexwalker
+
         # Openscad
         openscad-lsp
         # Hardware / Low level

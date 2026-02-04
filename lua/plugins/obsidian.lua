@@ -1,6 +1,8 @@
 return {
   'epwalsh/obsidian.nvim',
 
+  -- TODO: aggiustarlo tutto per creare le note io manualmente e poi farle "standardizzare" da obsidian dopo se voglio
+
   lazy = true,
 
   ft = "markdown",
@@ -33,6 +35,65 @@ return {
         return overridden(uri, opt)
       end
     end)(vim.ui.open)
+
+    -- TODO: adjust!!
+    -- VERSIONE CORRETTA E DEFINITIVA DELLA FUNZIONE DI NORMALIZZAZIONE
+-- Funzione di normalizzazione (versione semplice che ora funzionerà)
+    local function normalize_current_note()
+      local client = require("obsidian"):get_client()
+      if not client or not client.is_ready() then
+        print("Obsidian client non è pronto.")
+        return
+      end
+
+      local current_buf = vim.api.nvim_get_current_buf()
+      local current_path = vim.api.nvim_buf_get_name(current_buf)
+
+      if current_path == "" then
+        print("Errore: Salva prima il file con un nome.")
+        return
+      end
+
+      local file_name = vim.fn.fnamemodify(current_path, ":t")
+      if file_name:match("^[0-9]+_") then
+        print("Questo file sembra già normalizzato.")
+        return
+      end
+
+      local dir_path = vim.fn.fnamemodify(current_path, ":h")
+      local title_from_filename = vim.fn.fnamemodify(file_name, ":r")
+
+      local new_id = client.workspace.note_id_func(title_from_filename)
+      local new_path = dir_path .. "/" .. new_id .. ".md"
+
+      local note = require("obsidian.note"):new(new_id, { title = title_from_filename })
+      local frontmatter_data = client.workspace.frontmatter.func(note)
+
+      local final_yaml = { "---", "id: " .. frontmatter_data.id }
+      if frontmatter_data.aliases and #frontmatter_data.aliases > 0 then
+        table.insert(final_yaml, "aliases:")
+        for _, alias in ipairs(frontmatter_data.aliases) do
+          table.insert(final_yaml, "  - " .. alias)
+        end
+      else
+        table.insert(final_yaml, "aliases: []")
+      end
+      if note.tags and #note.tags > 0 then
+        table.insert(final_yaml, "tags: [" .. table.concat(note.tags, ", ") .. "]")
+      else
+        table.insert(final_yaml, "tags: []")
+      end
+      table.insert(final_yaml, "---")
+
+      local original_lines = vim.api.nvim_buf_get_lines(current_buf, 0, -1, false)
+      vim.api.nvim_buf_set_lines(current_buf, 0, -1, false, final_yaml)
+      vim.api.nvim_buf_set_lines(current_buf, #final_yaml, #final_yaml, false, original_lines)
+
+      vim.cmd("write")
+      vim.fn.rename(current_path, new_path)
+      vim.cmd("e " .. new_path)
+      print("Nota normalizzata con successo: " .. new_id)
+    end
 
     require('obsidian').setup({
       -- Disable legacy commands
@@ -112,45 +173,46 @@ return {
             -- Optional, customize how note file names are generated given the ID, target directory, and title.
             ---@param spec { id: string, dir: obsidian.Path, title: string|? }
             ---@return string|obsidian.Path The full path to the new note.
-            note_path_func = function(spec)
-              local path
-              local vault_root = vim.fn.expand("~/00_Omnis/")
-
-              -- Estraiamo il titolo se esiste
-              --local title = (spec.title or ""):gsub(" ", "_"):gsub("[^A-Za-z0-9_-]", ""):lower()
-              -- spec.id adesso contiene già "titolo_pulito_con_underscore" 
-              -- perché lo abbiamo sistemato in note_id_func
-              local title = tostring(spec.id)
-              --title = title:gsub(" ", "_"):gsub("[^A-Za-z0-9-]", ""):lower()
-              -- LOGICA DI SMISTAMENTO (Basata sul titolo o prefissi)
-              if title:match("^atlas") then
-                -- se il titolo inizia con atlas
-                path = vault_root .. "01_atlas/" .. tostring(spec.id)
-
-              -- NOTE: for planning note use the automatic daily note creation, and fot the week and month go into the folder and create note with `.`
-              --elseif title:lower():match("^planning") then
-              --  path = vault_root .. "02_planning/" .. tostring(spec.id)
-
-              elseif title:match("^icebox") then
-                path = vault_root .. "03_icebox/" .. tostring(spec.id)
-
-              elseif title:match("^note") then
-                path = vault_root .. "04_atomic_notes/" .. tostring(spec.id)
-
-              elseif title:sub(1,1) == "." then
-                -- Nella cartella corrente
-                local current_buffer_dir = vim.fn.expand("%:p:h")
-                if current_buffer_dir:match("^oil://") then
-                  current_buffer_dir = current_buffer_dir:gsub("^oil://", "")
-                end
-                path = (current_buffer_dir == "" and vim.fn.getcwd() or current_buffer_dir) .. "/" .. tostring(spec.id)
-
-              else
-                -- Default: usa la subdir definita in notes_subdir ("04_atomic_notes")
-                path = tostring(spec.dir / tostring(spec.id))
-              end
-
-              return vim.fs.normalize(tostring(path)) .. ".md"
+            -- NOTE: not needed anymore, use <ladder>onm
+--            note_path_func = function(spec)
+--              local path
+--              local vault_root = vim.fn.expand("~/00_Omnis/")
+--
+--              -- Estraiamo il titolo se esiste
+--              --local title = (spec.title or ""):gsub(" ", "_"):gsub("[^A-Za-z0-9_-]", ""):lower()
+--              -- spec.id adesso contiene già "titolo_pulito_con_underscore" 
+--              -- perché lo abbiamo sistemato in note_id_func
+--              local title = tostring(spec.id)
+--              --title = title:gsub(" ", "_"):gsub("[^A-Za-z0-9-]", ""):lower()
+--              -- LOGICA DI SMISTAMENTO (Basata sul titolo o prefissi)
+--              if title:match("^atlas") then
+--                -- se il titolo inizia con atlas
+--                path = vault_root .. "01_atlas/" .. tostring(spec.id)
+--
+--              -- NOTE: for planning note use the automatic daily note creation, and fot the week and month go into the folder and create note with `.`
+--              --elseif title:lower():match("^planning") then
+--              --  path = vault_root .. "02_planning/" .. tostring(spec.id)
+--
+--              elseif title:match("^icebox") then
+--                path = vault_root .. "03_icebox/" .. tostring(spec.id)
+--
+--              elseif title:match("^note") then
+--                path = vault_root .. "04_atomic_notes/" .. tostring(spec.id)
+--
+--              elseif title:sub(1,1) == "." then
+--                -- Nella cartella corrente
+--                local current_buffer_dir = vim.fn.expand("%:p:h")
+--                if current_buffer_dir:match("^oil://") then
+--                  current_buffer_dir = current_buffer_dir:gsub("^oil://", "")
+--                end
+--                path = (current_buffer_dir == "" and vim.fn.getcwd() or current_buffer_dir) .. "/" .. tostring(spec.id)
+--
+--              else
+--                -- Default: usa la subdir definita in notes_subdir ("04_atomic_notes")
+--                path = tostring(spec.dir / tostring(spec.id))
+--              end
+--
+--              return vim.fs.normalize(tostring(path)) .. ".md"
 --
 --              local path
 --              -- CASO 1: "." (Current Dir / Oil)
@@ -174,7 +236,7 @@ return {
 --
 --              -- Assicuriamoci che path sia una stringa prima di passarlo a normalize
 --              return vim.fs.normalize(tostring(path)) .. ".md"
-            end,
+--            end,
 
           },
         },
@@ -274,20 +336,6 @@ return {
           return out
         end
       },
-
-      -- NOTE: cosa è questo?
-      --  local out = { id = note.id, aliases = note.aliases, tags = note.tags }
-
-      --  -- `note.metadata` contains any manually added fields in the frontmatter.
-      --  -- So here we just make sure those fields are kept in the frontmatter.
-      --  if note.metadata ~= nil and not vim.tbl_isempty(note.metadata) then
-      --    for k, v in pairs(note.metadata) do
-      --      out[k] = v
-      --    end
-      --  end
-
-      --  return out
-      --end,
 
       -- Optional, set to true to force ':ObsidianOpen' to bring the app to the foreground.
       open = {
@@ -428,42 +476,45 @@ return {
     vim.keymap.set("v", "<leader>ol", "<cmd>Obsidian link<cr>", { desc = "Link selection" })
     vim.keymap.set("v", "<leader>onl", "<cmd>Obsidian link_new<cr>", { desc = "New note from selection" })
 
-    -- Note personalizzate
-    vim.keymap.set("n", "<leader>ona", function()
-      local title = vim.fn.input("Titolo Atlas: ")
-      if title ~= "" then
-        -- Crea la nota con il prefisso 'planning' per triggerare il path_func sopra
-        vim.cmd("Obsidian new atlas " .. title)
-        -- Aspetta un attimo che il buffer carichi e applica il template
-        vim.defer_fn(function()
-          vim.cmd("Obsidian template atlas_template.md")
-        end, 100)
-      end
-    end, { desc = "[O]bsidian [N]ew [A]tlas" })
+--    -- Note personalizzate
+--    vim.keymap.set("n", "<leader>ona", function()
+--      local title = vim.fn.input("Titolo Atlas: ")
+--      if title ~= "" then
+--        -- Crea la nota con il prefisso 'planning' per triggerare il path_func sopra
+--        vim.cmd("Obsidian new atlas " .. title)
+--        -- Aspetta un attimo che il buffer carichi e applica il template
+--        vim.defer_fn(function()
+--          vim.cmd("Obsidian template atlas_template.md")
+--        end, 100)
+--      end
+--    end, { desc = "[O]bsidian [N]ew [A]tlas" })
+--
+--    vim.keymap.set("n", "<leader>oni", function()
+--      local title = vim.fn.input("Titolo Icebox: ")
+--      if title ~= "" then
+--        -- Crea la nota con il prefisso 'planning' per triggerare il path_func sopra
+--        vim.cmd("Obsidian new icebox " .. title)
+--        -- Aspetta un attimo che il buffer carichi e applica il template
+--        vim.defer_fn(function()
+--          vim.cmd("Obsidian template icebox_template.md")
+--        end, 100)
+--      end
+--    end, { desc = "[O]bsidian [N]ew [I]cebox" })
+--
+--    vim.keymap.set("n", "<leader>onn", function()
+--      local title = vim.fn.input("Titolo Atomic note: ")
+--      if title ~= "" then
+--        -- Crea la nota con il prefisso 'planning' per triggerare il path_func sopra
+--        vim.cmd("Obsidian new note " .. title)
+--        -- Aspetta un attimo che il buffer carichi e applica il template
+--        vim.defer_fn(function()
+--          vim.cmd("Obsidian template atomic_note_template.md")
+--        end, 100)
+--      end
+--    end, { desc = "[O]bsidian [N]ew atomic [N]ote" })
 
-    vim.keymap.set("n", "<leader>oni", function()
-      local title = vim.fn.input("Titolo Icebox: ")
-      if title ~= "" then
-        -- Crea la nota con il prefisso 'planning' per triggerare il path_func sopra
-        vim.cmd("Obsidian new icebox " .. title)
-        -- Aspetta un attimo che il buffer carichi e applica il template
-        vim.defer_fn(function()
-          vim.cmd("Obsidian template icebox_template.md")
-        end, 100)
-      end
-    end, { desc = "[O]bsidian [N]ew [I]cebox" })
-
-    vim.keymap.set("n", "<leader>onn", function()
-      local title = vim.fn.input("Titolo Atomic note: ")
-      if title ~= "" then
-        -- Crea la nota con il prefisso 'planning' per triggerare il path_func sopra
-        vim.cmd("Obsidian new note " .. title)
-        -- Aspetta un attimo che il buffer carichi e applica il template
-        vim.defer_fn(function()
-          vim.cmd("Obsidian template atomic_note_template.md")
-        end, 100)
-      end
-    end, { desc = "[O]bsidian [N]ew atomic [N]ote" })
+    -- Normalization current file
+    vim.keymap.set("n", "<leader>onm", normalize_current_note, { desc = "[O]bsidian [N]ormalize [M]e" })
 
   end,
 }

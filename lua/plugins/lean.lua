@@ -22,7 +22,7 @@ return {
     -- Infoview (La finestra laterale)
     infoview = {
       autoopen = true,
-      width = 40,
+      width = 45,
       height = 20,
       orientation = "auto",
       horizontal_position = "bottom",
